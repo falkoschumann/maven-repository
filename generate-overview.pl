@@ -24,7 +24,7 @@ sub traverse {
 	my ($file) = @_;
 	
 	if ($file =~ m/maven-metadata.xml$/) {
-		open(IP, "$file") or die "Opening $file: $!";
+		open(IP, "$file") or die "Can't open $file: $!";
 		undef $/;
 		my $content = <IP>;
 		close(IP);
