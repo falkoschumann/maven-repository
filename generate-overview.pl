@@ -3,6 +3,9 @@
 use strict;
 use warnings;
 
+use HTML::Entities;
+use XML::Simple;
+
 my $path = shift || '.';
 
 print "<!DOCTYPE HTML>\n";
@@ -12,30 +15,64 @@ print "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" media=\"all
 print "</head>\n";
 print "<body>\n";
 
+print "<h1>Maven Repository</h1>\n";
+print "<p>To use the release repository add the following to your pom.xml</p>\n";
+print "<pre><code>";
+print encode_entities("<repositories>"), "\n";
+print encode_entities("    <repository>"), "\n";
+print encode_entities("        <id>github-falkoschumann</id>"), "\n";
+print encode_entities("        <url>http://falkoschumann.github.io/maven-repository/releases/</url>"), "\n";
+print encode_entities("    </repository>"), "\n";
+print encode_entities("</repositories>"), "\n";
+print "</code></pre>\n";
+print "<p>To use the snapshot repository add the following to your pom.xml</p>\n";
+print "<pre><code>";
+print encode_entities("<repositories>"), "\n";
+print encode_entities("    <repository>"), "\n";
+print encode_entities("        <id>github-falkoschumann</id>"), "\n";
+print encode_entities("        <url>http://falkoschumann.github.io/maven-repository/snapshots/</url>"), "\n";
+print encode_entities("    </repository>"), "\n";
+print encode_entities("</repositories>"), "\n";
+print "</code></pre>\n";
+
 print "<table>\n";
 print "<tr>\n";
-print "  <th>Artifact</th>\n";
-print "  <th>Version</th> \n";
+print "  <th class=\"groupId\">Group Id</th>\n";
+print "  <th class=\"artifactId\">Artifact Id</th>\n";
+print "  <th class=\"release\">Latest Version</th> \n";
+print "  <th class=\"lastUpdated\">Updated</th> \n";
 print "</tr>\n";
 
 traverse($path);
+
+print "</table>\n";
+
+print "</body>\n";
+print "</html>\n";
+
 
 sub traverse {
 	my ($file) = @_;
 	
 	if ($file =~ m/maven-metadata.xml$/) {
-		open(IP, "$file") or die "Can't open $file: $!";
-		undef $/;
-		my $content = <IP>;
-		close(IP);
-		
-		$content =~ m/<artifactId>(.*)<\/artifactId>/;
-		my $artifactId = $1;
-		$content =~ m/<release>(.*)<\/release>/;
-		my $release = $1;
+		my $metadata    = XMLin($file, forcearray => 0);
+		my $groupId     = $metadata->{'groupId'};
+		my $artifactId  = $metadata->{'artifactId'};
+		my $release     = $metadata->{'versioning'}->{'release'};
+		my $lastUpdated = $metadata->{'versioning'}->{'lastUpdated'};
+		$lastUpdated =~ m/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/;
+		my $year = $1;
+		my $month = $2;
+		my $day = $3;
+		my $hour = $4;
+		my $minute = $5;
+		my $second = $6;
+
 		print "<tr>\n";
-		print "  <td>$artifactId</td>\n";
-		print "  <td>$release</td>\n";
+		print "  <td class=\"groupId\">$groupId</td>\n";
+		print "  <td class=\"artifactId\">$artifactId</td>\n";
+		print "  <td class=\"release\">$release</td>\n";
+		print "  <td class=\"lastUpdated\">$year-$month-$day $hour:$minute:$second</td>\n";
 		print "</tr>\n";
 	}
 	
@@ -48,8 +85,3 @@ sub traverse {
 	}
 	close $dh;
 }
-
-print "</table>\n";
-
-print "</body>\n";
-print "</html>\n";
