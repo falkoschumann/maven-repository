@@ -16,6 +16,8 @@ print "</head>\n";
 print "<body>\n";
 
 print "<h1>Maven Repository</h1>\n";
+
+print "<h2>Releases</h2>\n";
 print "<p>To use the release repository add the following to your pom.xml</p>\n";
 print "<pre><code>";
 print encode_entities("<repositories>"), "\n";
@@ -25,6 +27,9 @@ print encode_entities("        <url>http://falkoschumann.github.io/maven-reposit
 print encode_entities("    </repository>"), "\n";
 print encode_entities("</repositories>"), "\n";
 print "</code></pre>\n";
+listRepository("releases");
+
+print "<h2>Snapshots</h2>\n";
 print "<p>To use the snapshot repository add the following to your pom.xml</p>\n";
 print "<pre><code>";
 print encode_entities("<repositories>"), "\n";
@@ -34,21 +39,24 @@ print encode_entities("        <url>http://falkoschumann.github.io/maven-reposit
 print encode_entities("    </repository>"), "\n";
 print encode_entities("</repositories>"), "\n";
 print "</code></pre>\n";
-
-print "<table>\n";
-print "<tr>\n";
-print "  <th class=\"groupId\">Group Id</th>\n";
-print "  <th class=\"artifactId\">Artifact Id</th>\n";
-print "  <th class=\"release\">Latest Version</th> \n";
-print "  <th class=\"lastUpdated\">Updated</th> \n";
-print "</tr>\n";
-
-traverse($path);
-
-print "</table>\n";
+listRepository("snapshots");
 
 print "</body>\n";
 print "</html>\n";
+
+
+sub listRepository {
+	my ($file) = @_;
+	print "<table>\n";
+	print "<tr>\n";
+	print "  <th class=\"groupId\">Group Id</th>\n";
+	print "  <th class=\"artifactId\">Artifact Id</th>\n";
+	print "  <th class=\"release\">Latest Version</th> \n";
+	print "  <th class=\"lastUpdated\">Updated</th> \n";
+	print "</tr>\n";
+	traverse($file);
+	print "</table>\n";
+}
 
 
 sub traverse {
