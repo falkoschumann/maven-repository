@@ -5,6 +5,7 @@ use warnings;
 
 use HTML::Entities;
 use XML::Simple;
+use Data::Dumper;
 
 print << 'HEADER';
 <!DOCTYPE HTML>
@@ -47,6 +48,7 @@ print << 'FOOTER';
 </html>
 FOOTER
 
+
 sub listRepository {
 	my ($file) = @_;
 	print << 'TABLE_HEADER';
@@ -54,7 +56,7 @@ sub listRepository {
 <tr>
   <th class="groupId">Group Id</th>
   <th class="artifactId">Artifact Id</th>
-  <th class="release">Latest Version</th>
+  <th class="release">Versions</th>
   <th class="lastUpdated">Updated</th>
 </tr>
 TABLE_HEADER
@@ -71,6 +73,7 @@ sub traverse {
 		my $groupId     = $metadata->{'groupId'};
 		my $artifactId  = $metadata->{'artifactId'};
 		my $release     = $metadata->{'versioning'}->{'release'};
+		my $version     = $metadata->{'versioning'}->{'versions'}->{'version'};
 		my $lastUpdated = $metadata->{'versioning'}->{'lastUpdated'};
 		$lastUpdated =~ m/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/;
 		my $year = $1;
@@ -80,12 +83,29 @@ sub traverse {
 		my $minute = $5;
 		my $second = $6;
 
+		my $txt;
+		if (ref($version) eq 'ARRAY') {
+			for (my $i = 0; $i < @$version; $i++) {
+				if ($release eq @$version[$i]) {
+					$txt .= "<strong>@$version[$i]</strong>";
+				} else {
+					$txt .= @$version[$i];
+				}
+				if ($i < @$version - 1) {
+					$txt .= ', ';
+				}
+			}
+		} else {
+			$txt = $version;
+		}
+		#my $txt = Dumper $version;
+		
 		print << "TABLE_DATA"
 <tr>
   <td class="groupId">$groupId</td>
   <td class="artifactId">$artifactId</td>
-  <td class="release">$release</td>
-  <td class="lastUpdated">$year-$month-$day $hour:$minute:$second</td>
+  <td class="release">$txt</td>
+  <td class="lastUpdated">$year-$month-$day</td>
 </tr>
 TABLE_DATA
 	}
