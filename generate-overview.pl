@@ -6,54 +6,58 @@ use warnings;
 use HTML::Entities;
 use XML::Simple;
 
-my $path = shift || '.';
+print << 'HEADER';
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" media="all">
+</head>
+<body>
+<h1>Maven Repository</h1>
+HEADER
 
-print "<!DOCTYPE HTML>\n";
-print "<html>\n";
-print "<head>\n";
-print "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" media=\"all\">\n";
-print "</head>\n";
-print "<body>\n";
-
-print "<h1>Maven Repository</h1>\n";
-
-print "<h2>Releases</h2>\n";
-print "<p>To use the release repository add the following to your pom.xml</p>\n";
-print "<pre><code>";
-print encode_entities("<repositories>"), "\n";
-print encode_entities("    <repository>"), "\n";
-print encode_entities("        <id>github-falkoschumann</id>"), "\n";
-print encode_entities("        <url>http://falkoschumann.github.io/maven-repository/releases/</url>"), "\n";
-print encode_entities("    </repository>"), "\n";
-print encode_entities("</repositories>"), "\n";
-print "</code></pre>\n";
+print << 'RELEASES';
+<h2>Releases</h2>
+<p>To use the release repository add the following to your pom.xml</p>
+<pre><code>&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;github-falkoschumann&lt;/id&gt;
+        &lt;url&gt;http://falkoschumann.github.io/maven-repository/releases/&lt;/url&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+</code></pre>
+RELEASES
 listRepository("releases");
 
-print "<h2>Snapshots</h2>\n";
-print "<p>To use the snapshot repository add the following to your pom.xml</p>\n";
-print "<pre><code>";
-print encode_entities("<repositories>"), "\n";
-print encode_entities("    <repository>"), "\n";
-print encode_entities("        <id>github-falkoschumann</id>"), "\n";
-print encode_entities("        <url>http://falkoschumann.github.io/maven-repository/snapshots/</url>"), "\n";
-print encode_entities("    </repository>"), "\n";
-print encode_entities("</repositories>"), "\n";
-print "</code></pre>\n";
+print << 'SNAPSHOTS';
+<h2>Snapshots</h2>
+<p>To use the snapshot repository add the following to your pom.xml</p>
+<pre><code>&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;github-falkoschumann&lt;/id&gt;
+        &lt;url&gt;http://falkoschumann.github.io/maven-repository/snapshots/&lt;/url&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+</code></pre>
+SNAPSHOTS
 listRepository("snapshots");
 
-print "</body>\n";
-print "</html>\n";
-
+print << 'FOOTER';
+</body>
+</html>
+FOOTER
 
 sub listRepository {
 	my ($file) = @_;
-	print "<table>\n";
-	print "<tr>\n";
-	print "  <th class=\"groupId\">Group Id</th>\n";
-	print "  <th class=\"artifactId\">Artifact Id</th>\n";
-	print "  <th class=\"release\">Latest Version</th> \n";
-	print "  <th class=\"lastUpdated\">Updated</th> \n";
-	print "</tr>\n";
+	print << 'TABLE_HEADER';
+<table>
+<tr>
+  <th class="groupId">Group Id</th>
+  <th class="artifactId">Artifact Id</th>
+  <th class="release">Latest Version</th>
+  <th class="lastUpdated">Updated</th>
+</tr>
+TABLE_HEADER
 	traverse($file);
 	print "</table>\n";
 }
@@ -76,12 +80,14 @@ sub traverse {
 		my $minute = $5;
 		my $second = $6;
 
-		print "<tr>\n";
-		print "  <td class=\"groupId\">$groupId</td>\n";
-		print "  <td class=\"artifactId\">$artifactId</td>\n";
-		print "  <td class=\"release\">$release</td>\n";
-		print "  <td class=\"lastUpdated\">$year-$month-$day $hour:$minute:$second</td>\n";
-		print "</tr>\n";
+		print << "TABLE_DATA"
+<tr>
+  <td class="groupId">$groupId</td>
+  <td class="artifactId">$artifactId</td>
+  <td class="release">$release</td>
+  <td class="lastUpdated">$year-$month-$day $hour:$minute:$second</td>
+</tr>
+TABLE_DATA
 	}
 	
 	return if not -d $file;
