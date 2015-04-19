@@ -96,7 +96,7 @@ sub traverse {
 				}
 			}
 		} else {
-			$txt = $version;
+			$txt = "<strong>$version</strong>";
 		}
 		#my $txt = Dumper $version;
 		
