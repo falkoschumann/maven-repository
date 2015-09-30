@@ -3,11 +3,12 @@
   <groupId>de.muspellheim</groupId>
   <artifactId>datenverteiler-datenkatalog</artifactId>
   <versioning>
-    <release>3.0.2</release>
+    <release>3.0.3</release>
     <versions>
       <version>3.0.0</version>
       <version>3.0.2</version>
+      <version>3.0.3</version>
     </versions>
-    <lastUpdated>20150925202551</lastUpdated>
+    <lastUpdated>20150930201003</lastUpdated>
   </versioning>
 </metadata>
